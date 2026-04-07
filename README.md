@@ -1,0 +1,1 @@
+🚀 Clon de Netflix **Full Stack** & **AI Powered**. Construido con `React`, `Next.js`, `TypeScript`, `MongoDB`, `NextAuth` y `Tailwind CSS`. Streaming moderno y recomendaciones inteligentes. 🍿
