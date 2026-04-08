@@ -31,7 +31,7 @@ const SignUp = () => {
         return;
       }
 
-      router.push("/");
+      router.push("/profiles");
     } catch (error) {
       console.log(error);
     }
