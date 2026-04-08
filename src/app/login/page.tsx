@@ -37,7 +37,7 @@ const Login = () => {
 
     <div className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center bg-black loginContainer">
       <div className="max-w-[480px] w-full bg-[#000000b3] rounded-sm py-12 px-16 font-bold text-[2rem] text-white flex flex-col gap-5 z-50">
-        <h1>Sign Up</h1>
+        <h1>Login</h1>
         <Input type="email" 
         placeholder="Email" 
         className="py-6 px-2"
@@ -53,8 +53,12 @@ const Login = () => {
         <button className="cursor-pointer w-full bg-[#e50914] text-base font-medium rounded-lg py-2.5" onClick={handleLogin}>Sign Up</button>
         <p className="text-base text-[#FFFFFFb3] text-center">OR</p>
         <div className="flex items-center justify-center gap-4">
-          <FcGoogle className="cursor-pointer w-10 h-10"/>
-          <BsGithub className="cursor-pointer w-10 h-10"/>
+          <FcGoogle className="cursor-pointer w-10 h-10"
+          onClick ={() => signIn("google")}
+          />
+          <BsGithub className="cursor-pointer w-10 h-10"
+          onClick ={() => signIn("github")}
+          />
         </div>
         <div>
           <span className="text-[#ffffffb3] text-base font-normal">New to Netflix? {" "}</span>

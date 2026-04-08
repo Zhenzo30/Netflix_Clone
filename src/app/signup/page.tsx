@@ -81,8 +81,12 @@ const SignUp = () => {
         <button className="cursor-pointer w-full bg-[#e50914] text-base font-medium rounded-lg py-2.5" onClick={handleSignUp}>Sign Up</button>
         <p className="text-base text-[#FFFFFFb3] text-center">OR</p>
         <div className="flex items-center justify-center gap-4">
-          <FcGoogle className="cursor-pointer w-10 h-10"/>
-          <BsGithub className="cursor-pointer w-10 h-10"/>
+          <FcGoogle className="cursor-pointer w-10 h-10"
+          onClick ={() => signIn("google")}
+          />
+          <BsGithub className="cursor-pointer w-10 h-10"
+          onClick ={() => signIn("github")}
+          />
         </div>
         <div>
           <span className="text-[#ffffffb3] text-base font-normal">Already have an account? {" "}</span>
