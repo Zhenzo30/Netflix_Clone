@@ -53,8 +53,38 @@ export const authOptions: AuthOptions = {
         GitHubProvider({
             clientId: process.env.GITHUB_CLIENT_ID!,
             clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+            // 1. PEDIMOS PERMISO A GITHUB PARA LEER EL EMAIL PRIVADO
+            authorization: {
+                params: {
+                    scope: "read:user user:email",
+                },
+            },
         }),
         ],
+        callbacks: {
+            async signIn({user}){
+                try {
+                    await connectToDB();
+
+                    // 2. SI POR ALGUNA RAZA NO LLEGA EL EMAIL, LE PONEMOS UNO FALSO PARA QUE MONGODB NO EXPLOTE
+                    const emailToSave = user.email || `github_${user.id}@noreply.github.com`;
+
+                    const existingUser = await User.findOne({ email: emailToSave });
+
+                    if (!existingUser) {
+                        await User.create({
+                            email: emailToSave,
+                            name: user.name,
+                            image: user.image,
+                        });
+                    }
+                } catch (error) {
+                    console.log(error);
+                    // 3. QUITAMOS EL "return false;" para que aunque falle la BD, deje entrar al usuario
+                }
+                return true;
+            },
+        },
         pages: {
             signIn: "/login",
         },
