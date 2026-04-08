@@ -82,10 +82,10 @@ const SignUp = () => {
         <p className="text-base text-[#FFFFFFb3] text-center">OR</p>
         <div className="flex items-center justify-center gap-4">
           <FcGoogle className="cursor-pointer w-10 h-10"
-          onClick ={() => signIn("google")}
+          onClick ={() => signIn("google", {callbackUrl: "/profiles"})}
           />
           <BsGithub className="cursor-pointer w-10 h-10"
-          onClick ={() => signIn("github")}
+          onClick ={() => signIn("github", {callbackUrl: "/profiles"})}
           />
         </div>
         <div>
