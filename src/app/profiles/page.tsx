@@ -1,9 +1,15 @@
 "use client";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Profiles = () => {
   const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleProfileClick = () => {
+    router.push("/");
+    };
 
   return (
     <div className="flex w-full h-screen justify-center items-center flex-col gap-8">
@@ -12,7 +18,9 @@ const Profiles = () => {
       {/* 1. Agregué w-[160px] y items-center para fijar el ancho */}
       <div className="flex flex-col items-center w-[160px] gap-3">
         
-        <div className="border-[3.24px] border-[#e5e5e5] rounded-sm overflow-hidden cursor-pointer">
+        <div className="border-[3.24px] border-[#e5e5e5] rounded-sm overflow-hidden cursor-pointer"
+        onClick={handleProfileClick}
+        >
           <Image
             src="/assets/profile.png"
             height={144}
