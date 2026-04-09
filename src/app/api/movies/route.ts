@@ -1,9 +1,12 @@
 import { connectToDB } from "@/lib/db";
+import serverAuth from "@/lib/serverAuth";
 import Movie from "@/models/Movie";
 import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
+        await serverAuth();
+
         await connectToDB();
 
         const movies = await Movie.find({});
