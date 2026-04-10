@@ -3,12 +3,30 @@ import { SparkleIcon } from "lucide-react";
 import Image from "next/image";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./DropdownMenu";
 import { signOut, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 const Navbar = () => {
     const { data: session } = useSession();
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 0);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
 
     return (
-        <div className="fixed top-0 w-full flex justify-between px-12 py-4 bg-transparent transition-colors duration-1000 z-50">
+        <div className={cn(
+            `fixed top-0 w-full flex justify-between px-12 py-4 bg-transparent transition-colors duration-1000 z-50`,
+            isScrolled ? "bg-black" : ""
+        )}>
             <div className="flex gap-8 items-center">
                 <h1 className="text-[#e50914] cursor-pointer text-[25px]">Netflix</h1>
                 <ul className="flex text-sm gap-5">
