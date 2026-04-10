@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { IMovie } from "@/types/movie.types";
-
+import Movies from "./Movies";
 
 const MovieList = () => {  
 
