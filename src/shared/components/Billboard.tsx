@@ -1,15 +1,16 @@
 "use client";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useSession } from "next-auth/react"; // <-- Importamos useSession
+import { useSession } from "next-auth/react";
 import { IMovie } from "@/types/movie.types";
 import Image from "next/image";
+import MovieInfoModal from "./MovieInfoModal";
 
 const Billboard = () => {
     const [randomMovie, setRandomMovie] = useState<IMovie | null>(null);
+    const [showInfoModal, setShowInfoModal] = useState(false);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     
-    // <-- El semáforo
     const { status } = useSession();
 
     const fetchMovies = async () => {
@@ -30,15 +31,16 @@ const Billboard = () => {
         }
     };
 
+    const handleOpenInfoModal = () => {
+        setShowInfoModal(true);
+    };
 
     useEffect(() => {
-        // Solo disparamos la petición SI el estado es "authenticated" (Ya está logueado)
         if (status === "authenticated") {
             fetchMovies();
         }
-    }, [status]); // Se ejecuta cada vez que el estado de la sesión cambie
+    }, [status]);
 
-    // Mientras NextAuth verifica quién es, mostramos "Cargando..."
     if (status === "loading") {
         return (
             <div className="h-screen relative bg-black">
@@ -50,8 +52,7 @@ const Billboard = () => {
     }
 
     return (
-
-        <div>
+        <div className="h-screen relative bg-black">
             <video 
                 src={randomMovie?.videoUrl}
                 poster={randomMovie?.thumbnailUrl}
@@ -62,13 +63,16 @@ const Billboard = () => {
                 loop
                 playsInline
             />
-            <div
-                className="absolute top-1/2 left-10 -translate-y-1/2 transform flex flex-col gap-4"
-            >
+            
+            <div className="absolute top-1/2 left-10 -translate-y-1/2 transform flex flex-col gap-4">
                 <h1 className="text-5xl text-white font-bold">{randomMovie?.title}</h1>
                 <p className="text-white text-lg">{randomMovie?.description}</p>
+                
                 <div className="flex gap-2">
-                    <button className="text-lg font-semibold bg-white py-2 px-5 text-black rounded-sm cursor-pointer flex gap-4 hover:bg-[#ffffffbf]" onClick={handlePlayButtonClick}>
+                    <button 
+                        className="text-lg font-semibold bg-white py-2 px-5 text-black rounded-sm cursor-pointer flex gap-4 hover:bg-[#ffffffbf]" 
+                        onClick={handlePlayButtonClick}
+                    >
                         <Image
                             src="/assets/play.svg"
                             width={24}
@@ -77,19 +81,24 @@ const Billboard = () => {
                         />
                         Play
                     </button>
-                    <button className="text-lg font-semibold bg-[#6d6d6eb3] py-2 px-5 text-white rounded-sm cursor-pointer flex gap-4 hover:bg-[#6d6d6e66]" >
+                    
+                    <button 
+                        className="text-lg font-semibold bg-[#6d6d6eb3] py-2 px-5 text-white rounded-sm cursor-pointer flex gap-4 hover:bg-[#6d6d6e66]" 
+                        onClick={handleOpenInfoModal}
+                    >
                         <Image
                             src="/assets/info.svg"
                             width={24}
                             height={24}
-                            alt="Play video"
+                            alt="More info"
                         />
                         More info
                     </button>
                 </div>
             </div>
+
+            {showInfoModal && <MovieInfoModal />}
         </div>
-        
     );
 }; 
 
