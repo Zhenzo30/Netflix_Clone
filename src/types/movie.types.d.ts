@@ -4,7 +4,7 @@ interface IMovie {
     description: string;
     videoUrl: string;
     thumbnailUrl: string;
-    genres: string;
+    genre: string;
     duration: string;
     rating: number;
     mood: string;
