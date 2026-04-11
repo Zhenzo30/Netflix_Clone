@@ -1,3 +1,4 @@
+"use client";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { IMovie } from "@/types/movie.types";
