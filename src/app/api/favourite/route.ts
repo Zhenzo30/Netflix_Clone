@@ -1,17 +1,16 @@
 import serverAuth from "@/lib/serverAuth";
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDB } from "@/lib/db"; // Corregido espacio aquí
+import { connectToDB } from "@/lib/db";
 import Movie from "@/models/Movie";
 import User from "@/models/User";
 
 export async function POST(req: NextRequest) {
     try {
-        const { currentUser } = await serverAuth(); // Corregido espacio
+        await connectToDB(); // 1. CONECTAR PRIMERO
+        const currentUser = await serverAuth(); // 2. BUSCAR USUARIO DESPUÉS
 
-        await connectToDB();
-
-        const { movieID } = await req.json();
-        const isMovieExist = await Movie.findById(movieID);
+        const { movieId } = await req.json();
+        const isMovieExist = await Movie.findById(movieId);
 
         if (!isMovieExist) {
             return NextResponse.json(
@@ -22,7 +21,7 @@ export async function POST(req: NextRequest) {
 
         await User.updateOne(
             { email: currentUser.email },
-            { $addToSet: { favourites: movieID } }
+            { $addToSet: { favourites: movieId } }
         );
 
         return NextResponse.json(
@@ -40,13 +39,11 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
     try {
-        const { currentUser } = await serverAuth(); // Corregido espacio
+        await connectToDB(); // 1. CONECTAR PRIMERO
+        const currentUser = await serverAuth(); // 2. BUSCAR USUARIO DESPUÉS
 
-        await connectToDB();
-
-        const { movieID } = await req.json();
-        // ERROR CORREGIDO: Faltaba completar la búsqueda en la base de datos
-        const isMovieExist = await Movie.findById(movieID); 
+        const { movieId } = await req.json();
+        const isMovieExist = await Movie.findById(movieId); 
 
         if (!isMovieExist) {
             return NextResponse.json(
@@ -57,10 +54,9 @@ export async function DELETE(req: NextRequest) {
 
         await User.updateOne(
             { email: currentUser.email },
-            { $pull: { favourites: movieID } }
+            { $pull: { favourites: movieId } }
         );
 
-        // ERROR CORREGIDO: Faltaba retornar la respuesta de éxito
         return NextResponse.json(
             { message: "Movie removed from favourites successfully" },
             { status: 200 }

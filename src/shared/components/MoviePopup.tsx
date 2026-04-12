@@ -1,12 +1,26 @@
 "use client";
+
 import { IMovie } from "@/types/movie.types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { clsx } from "clsx";
+import useUser from "@/stores/user.store";
+import axios from "axios";
 
-const MoviePopup = ({ movie, handleOpenInfoModal }: { movie: IMovie; handleOpenInfoModal: () => void }) => {
+const MoviePopup = ({ 
+    movie, 
+    handleOpenInfoModal 
+}: { 
+    movie: IMovie; 
+    handleOpenInfoModal: () => void;
+}) => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+    const { user, updateUser, updateFavourites } = useUser();
+
+    const isFavourite = useMemo(() => {
+        return user?.favourites.includes(movie._id);
+    }, [user, movie]);
 
     const handlePlayButtonClick = () => {
         if (videoRef.current) {
@@ -15,6 +29,20 @@ const MoviePopup = ({ movie, handleOpenInfoModal }: { movie: IMovie; handleOpenI
             videoRef.current.requestFullscreen();
         }
     };
+
+    const toggleFfavourites = async (movieId: string) => {
+        try {
+            if (isFavourite) {
+                await axios.delete("/api/favourite", { data: { movieId } });
+            } else {
+                await axios.post("/api/favourite", { movieId });
+            }
+            updateUser();
+            updateFavourites();
+        } catch (error) {
+            console.log(error);
+        }
+    }; // <--- ERROR CORREGIDO AQUÍ: Faltaba cerrar la función con }; 
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -59,9 +87,9 @@ const MoviePopup = ({ movie, handleOpenInfoModal }: { movie: IMovie; handleOpenI
                         {/* ---> FIX AQUÍ: Se quitó el handlePlayButtonClick y se dejó vacío () => {} <--- */}
                         <button 
                             className="bg-[#2a2a2a99] border-2 rounded-full p-2 border-[#ffffff80] cursor-pointer"
-                            onClick={() => {}} // No hace nada por ahora
+                            onClick={() => toggleFfavourites(movie._id)}
                         >
-                            <Image src="/assets/plus.svg" alt="Add" width={20} height={20} />
+                            <Image src={`/assets/${isFavourite ? "white-tick" : "plus"}.svg`} alt="Add" width={20} height={20} />
                         </button>
                     </div>
                     
