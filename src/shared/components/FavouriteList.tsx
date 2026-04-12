@@ -12,7 +12,7 @@ const FavouriteList = () => {
         updateFavourites();
     }, [updateFavourites]);
 
-    return <div className="my-8">
+    return <div className="pb-16">
         <Movies movies={favourites} label="My List"/>
     </div>;
 };
