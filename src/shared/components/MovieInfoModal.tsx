@@ -1,9 +1,12 @@
-import { useRef } from "react";
-import { Dialog, DialogContent} from "../ui/Dialog";
+"use client";
+
+import { useMemo, useRef } from "react";
+import { Dialog, DialogContent } from "../ui/Dialog";
 import { IMovie } from "@/types/movie.types";
 import Image from "next/image";
 import { Dot } from "lucide-react";
-
+import useUser from "@/stores/user.store";
+import axios from "axios";
 
 interface IMovieInfoModalProps {
     showInfoModal: boolean;
@@ -11,13 +14,31 @@ interface IMovieInfoModalProps {
     movieData: IMovie | null;
 }
 
-const MovieInfoModal = ({showInfoModal, setShowInfoModal, movieData}: IMovieInfoModalProps) => {
-
+const MovieInfoModal = ({ showInfoModal, setShowInfoModal, movieData }: IMovieInfoModalProps) => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const { updateUser, updateFavourites, user } = useUser();
+
+    const isFavourite = useMemo(() => {
+        return user?.favourites.includes(movieData?._id || "");
+    }, [user, movieData]);
 
     const handlePlayButtonClick = () => {
         if (videoRef.current) {
             videoRef.current.requestFullscreen();
+        }
+    };
+
+    const toggleFavourite = async () => {
+        try {
+            if (isFavourite) {
+                await axios.delete("/api/favourite", { data: { movieId: movieData?._id } });
+            } else {
+                await axios.post("/api/favourite", { movieId: movieData?._id });
+            }
+            updateUser();
+            updateFavourites();
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -27,38 +48,47 @@ const MovieInfoModal = ({showInfoModal, setShowInfoModal, movieData}: IMovieInfo
                 <div className="flex flex-col gap-4 w-full">
                     <div className="relative">
                         <video 
-                        ref={videoRef}
-                        src={movieData?.videoUrl}
-                        poster={movieData?.thumbnailUrl}
-                        className="w-full h-[350px] object-cover"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
+                            ref={videoRef}
+                            src={movieData?.videoUrl}
+                            poster={movieData?.thumbnailUrl}
+                            className="w-full h-[350px] object-cover"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
                         />
                         <div className="absolute bottom-4 left-6 flex flex-col gap-5 items-center">
-                            <h1 className="text-4xl font-bold text-white self-start">{movieData?.title}</h1>
+                            <h1 className="text-4xl font-bold text-white self-start">
+                                {movieData?.title}
+                            </h1>
                             <div className="flex self-start gap-3">
-                                <button className="flex gap-2 bg-white p-2 px-3.5 rounded-sm self-start cursor pointer font-bold" onClick={handlePlayButtonClick}>
-                                 <Image 
-                                    src="/assets/play.svg"
-                                    width={20}
-                                    height={20}
-                                    alt="Play"
-                                 />
-                                 Play   
+                                <button 
+                                    className="flex gap-2 bg-white p-2 px-3.5 rounded-sm self-start cursor-pointer font-bold" 
+                                    onClick={handlePlayButtonClick}
+                                >
+                                    <Image 
+                                        src="/assets/play.svg"
+                                        width={20}
+                                        height={20}
+                                        alt="Play"
+                                    />
+                                    Play   
                                 </button>
-                                <button className="bg-transparent border-2 rounded-full p-2 border-white cursor pointer">
-                                 <Image 
-                                    src="/assets/plus.svg"
-                                    width={20}
-                                    height={20}
-                                    alt="Add to my list"
-                                 />   
+                                <button 
+                                    className="bg-transparent border-2 rounded-full p-2 border-white cursor-pointer"
+                                    onClick={toggleFavourite}
+                                >
+                                    <Image 
+                                        src={`/assets/${isFavourite ? "white-tick" : "plus"}.svg`}
+                                        width={20}
+                                        height={20}
+                                        alt="Add to my list"
+                                    />   
                                 </button>
                             </div>
                         </div>
                     </div>
+                    
                     <div className="flex flex-col gap-6 p-10">
                         <div className="flex gap-2 items-center">
                             <span className="px-2 uppercase whitespace-nowrap text-[#bcbcbc] text-sm font-medium border border-[#fff6]">
@@ -71,9 +101,11 @@ const MovieInfoModal = ({showInfoModal, setShowInfoModal, movieData}: IMovieInfo
                                 HD
                             </span>
                         </div>
+                        
                         <p className="text-base leading-[26px] text-white">
                             {movieData?.description}
                         </p>
+                        
                         <div className="flex">
                             <p className="textShadow text-base text-white">
                                 {movieData?.genre}
@@ -87,7 +119,7 @@ const MovieInfoModal = ({showInfoModal, setShowInfoModal, movieData}: IMovieInfo
                 </div>
             </DialogContent>
         </Dialog>
-    )
+    );
 };
 
 export default MovieInfoModal;

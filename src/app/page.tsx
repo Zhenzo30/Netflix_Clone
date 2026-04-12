@@ -4,6 +4,7 @@ import MovieList from "@/shared/components/MovieList";
 import Navbar from "@/shared/components/Navbar";
 import { useEffect } from "react"; // <--- CAMBIO AQUÍ: useEffect en lugar de useEffectEvent
 import useUser from "@/stores/user.store";
+import FavouriteList from "@/shared/components/FavouriteList";
 
 export default function Home() {
 
@@ -18,6 +19,7 @@ export default function Home() {
       <Navbar />
       <Billboard />
       <MovieList />
+      <FavouriteList />
     </div>
    );
 }
