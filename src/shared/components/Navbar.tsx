@@ -5,10 +5,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import NetflixGPTModal from "./NetflixGPTModal";
 
 const Navbar = () => {
     const { data: session } = useSession();
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isNetflixGPTModalOpen, setIsNetflixGPTModalOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -23,7 +25,8 @@ const Navbar = () => {
     }, []);
 
     return (
-        <div className={cn(
+        <>
+            <div className={cn(
             `fixed top-0 w-full flex justify-between px-12 py-4 bg-transparent transition-colors duration-1000 z-50`,
             isScrolled ? "bg-black" : ""
         )}>
@@ -37,7 +40,7 @@ const Navbar = () => {
                 </ul>
             </div>
             <div className="flex gap-[15px] items-center">
-                <button className="cursor-pointer">
+                <button className="cursor-pointer" onClick={() => setIsNetflixGPTModalOpen(true)}>
                     <SparkleIcon className="text-white" />
                 </button>
                 <Image 
@@ -85,7 +88,13 @@ const Navbar = () => {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-        </div>
+            </div>
+            {isNetflixGPTModalOpen 
+            ? <NetflixGPTModal 
+                isNetflixGPTModalOpen = {isNetflixGPTModalOpen} 
+                setIsNetflixGPTModalOpen = {setIsNetflixGPTModalOpen}
+            /> : null}
+        </>
     );
 };
 
